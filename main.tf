@@ -1,0 +1,117 @@
+resource "azurerm_resource_group" "this" {
+  count    = var.create_new_resource_group ? 1 : 0
+  name     = var.resource_group.name
+  location = var.resource_group.location
+  tags = merge(
+    try(var.tags),
+    tomap({
+      "Resource Type" = "Resource Group"
+    })
+  )
+}
+
+resource "azurerm_vpn_gateway" "this" {
+  for_each = var.vpn_gateways
+
+  name                = var.vpn_gateways[each.key].name
+  resource_group_name = var.resource_group.name
+  location            = var.resource_group.location
+  virtual_hub_id      = var.virtual_wan_properties.virtual_hub_id
+
+  routing_preference = var.vpn_gateways[each.key].routing_preference
+  scale_unit         = var.vpn_gateways[each.key].scale_unit
+
+  tags = merge(
+    try(var.tags),
+    tomap({
+      "Resource Type" = "VPN Gateway"
+    })
+  )
+}
+
+
+
+resource "azurerm_vpn_site" "this" {
+  for_each            = var.vpn_sites
+  name                = var.vpn_sites[each.key].name
+  location            = var.resource_group.location
+  resource_group_name = var.resource_group.name
+
+  virtual_wan_id = var.virtual_wan_properties.virtual_wan_id
+  address_cidrs  = var.vpn_sites[each.key].address_cidrs
+
+  dynamic "link" {
+    for_each = each.value.links != null && length(each.value.links) > 0 ? [each.value.links] : []
+    content {
+      name          = links.value.name
+      ip_address    = links.value.ip_address
+      provider_name = links.value.provider_name
+      speed_in_mbps = links.value.speed_in_mbps
+
+      dynamic "bgp" {
+        for_each = link.value.bgp_settings != null ? [link.value.bgp_settings] : []
+        content {
+          asn             = bgp.value.asn
+          peering_address = bgp.value.bgp_peering_address
+        }
+      }
+    }
+  }
+
+  tags = merge(
+    try(var.tags),
+    tomap({
+      "Resource Type" = "VPN Site"
+    })
+  )
+}
+
+resource "azurerm_vpn_gateway_connection" "this" {
+  for_each = var.vpn_site_connections
+
+  name                      = "${var.vpn_gateways[each.key].name}-${var.vpn_sites[each.key].name}"
+  vpn_gateway_id            = azurerm_vpn_gateway.this[var.vpn_gateways[each.key].name].id
+  remote_vpn_site_id        = azurerm_vpn_site.this[var.vpn_sites[each.key].name].id
+  internet_security_enabled = try(var.vpn_site_connections[each.key].internet_security_enabled, null)
+
+  dynamic "vpn_link" {
+    for_each = var.vpn_site_connections[each.key].vpn_links
+    content {
+      name                                  = vpn_link.value.name
+      vpn_site_link_id                      = azurerm_vpn_site.this[var.vpn_sites[each.key].name].link[vpn_link.value.name].id
+      bandwidth_mbps                        = try(vpn_link.value.bandwidth_mbps, null)
+      bgp_enabled                           = try(vpn_link.value.bgp_enabled, null)
+      connection_mode                       = try(vpn_link.value.connection_mode, null)
+      protocol                              = try(vpn_link.value.protocol, null)
+      ratelimit_enabled                     = try(vpn_link.value.ratelimit_enabled, null)
+      route_weight                          = try(vpn_link.value.route_weight, null)
+      shared_key                            = try(vpn_link.value.shared_key, null)
+      local_azure_ip_address_enabled        = try(vpn_link.value.local_azure_ip_address_enabled, null)
+      policy_based_traffic_selector_enabled = try(vpn_link.value.policy_based_traffic_selector_enabled, null)
+
+      dynamic "ipsec_policy" {
+        for_each = vpn.link.value.ipsec_policy != null ? [vpn_link.value.ipsec_policy] : []
+
+        content {
+          dh_group                 = ipsec_policy.value.dh_group
+          ike_encryption_algorithm = ipsec_policy.value.ike_encryption_algorithm
+          ike_integrity_algorithm  = ipsec_policy.value.ike_integrity_algorithm
+          encryption_algorithm     = ipsec_policy.value.encryption_algorithm
+          integrity_algorithm      = ipsec_policy.value.integrity_algorithm
+          pfs_group                = ipsec_policy.value.pfs_group
+          sa_data_size_kb          = ipsec_policy.value.sa_data_size_kb
+          sa_lifetime_sec          = ipsec_policy.value.sa_lifetime_sec
+        }
+      }
+
+      dynamic "custom_bgp_address" {
+        for_each = vpn_link.value.custom_bgp_address != null ? [vpn_link.value.custom_bgp_address] : []
+
+        content {
+          ip_address          = custom_bgp_address.value.ip_address
+          ip_configuration_id = custom_bgp_address.value.ip_configuration_id
+        }
+      }
+    }
+  }
+}

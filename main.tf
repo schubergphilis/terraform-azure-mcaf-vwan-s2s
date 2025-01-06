@@ -41,7 +41,7 @@ resource "azurerm_vpn_site" "this" {
   address_cidrs  = var.vpn_sites[each.key].address_cidrs
 
   dynamic "link" {
-    for_each = each.value.links != null && length(each.value.links) > 0 ? [each.value.links] : []
+    for_each = each.value.links != null && length(each.value.links) > 0 ? each.value.links : []
     content {
       name          = link.value.name
       ip_address    = link.value.ip_address

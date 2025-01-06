@@ -22,7 +22,6 @@ variable "virtual_wan_properties" {
   description = "The Virtual WAN properties"
   type = object({
     virtual_wan_id = string
-    virtual_hub_id = string
   })
 }
 
@@ -32,6 +31,7 @@ variable "vpn_gateways" {
     name               = string
     routing_preference = string
     scale_unit         = number
+    virtual_hub_id     = string
   }))
 }
 

@@ -16,7 +16,7 @@ resource "azurerm_vpn_gateway" "this" {
   name                = each.value.name
   resource_group_name = var.resource_group.name
   location            = var.resource_group.location
-  virtual_hub_id      = var.virtual_wan_properties.virtual_hub_id
+  virtual_hub_id      = each.value.virtual_hub_id
 
   routing_preference = try(each.value.routing_preference, null)
   scale_unit         = try(each.value.scale_unit, null)

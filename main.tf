@@ -13,13 +13,13 @@ resource "azurerm_resource_group" "this" {
 resource "azurerm_vpn_gateway" "this" {
   for_each = var.vpn_gateways
 
-  name                = var.vpn_gateways[each.key].name
+  name                = each.value.name
   resource_group_name = var.resource_group.name
   location            = var.resource_group.location
   virtual_hub_id      = var.virtual_wan_properties.virtual_hub_id
 
-  routing_preference = var.vpn_gateways[each.key].routing_preference
-  scale_unit         = var.vpn_gateways[each.key].scale_unit
+  routing_preference = try(each.value.routing_preference, null)
+  scale_unit         = try(each.value.scale_unit, null)
 
   tags = merge(
     try(var.tags),
@@ -33,12 +33,12 @@ resource "azurerm_vpn_gateway" "this" {
 
 resource "azurerm_vpn_site" "this" {
   for_each            = var.vpn_sites != null ? var.vpn_sites : {}
-  name                = var.vpn_sites[each.key].name
+  name                = each.value.name
   location            = var.resource_group.location
   resource_group_name = var.resource_group.name
 
   virtual_wan_id = var.virtual_wan_properties.virtual_wan_id
-  address_cidrs  = var.vpn_sites[each.key].address_cidrs
+  address_cidrs  = each.value.address_cidrs
 
   dynamic "link" {
     for_each = each.value.links != null && length(each.value.links) > 0 ? each.value.links : []

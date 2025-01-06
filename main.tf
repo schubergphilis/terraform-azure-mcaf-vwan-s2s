@@ -67,15 +67,15 @@ resource "azurerm_vpn_site" "this" {
 }
 
 resource "azurerm_vpn_gateway_connection" "this" {
-  for_each = var.vpn_site_connections
+  for_each = var.vpn_site_connections != null && length(var.vpn_site_connections) > 0 ? var.vpn_site_connections : {}
 
-  name                      = "${var.vpn_gateways[each.key].name}-${var.vpn_sites[each.key].name}"
-  vpn_gateway_id            = azurerm_vpn_gateway.this[var.vpn_gateways[each.key].name].id
-  remote_vpn_site_id        = azurerm_vpn_site.this[var.vpn_sites[each.key].name].id
+  name                      = each.value.name
+  vpn_gateway_id            = azurerm_vpn_gateway.this[each.value.vpn_gateway_name].id
+  remote_vpn_site_id        = azurerm_vpn_site.this[each.value.remote_vpn_site_name].id
   internet_security_enabled = try(each.value.internet_security_enabled, null)
 
   dynamic "vpn_link" {
-    for_each = each.value.vpn_links
+    for_each = each.value.vpn_links != null && length(each.value.vpn_links) > 0 ? each.value.vpn_links : []
 
     content {
       name                                  = vpn_link.value.name

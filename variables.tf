@@ -1,3 +1,10 @@
+variable "tags" {
+  description = "A map of tags to assign to the resource."
+  type        = map(string)
+  default     = {}
+}
+
+
 variable "create_new_resource_group" {
   description = "A flag to create a Resource Group for the IP Groups"
   type        = bool
@@ -10,12 +17,6 @@ variable "resource_group" {
     name     = string
     location = string
   })
-}
-
-variable "tags" {
-  description = "A map of tags to assign to the resource."
-  type        = map(string)
-  default     = {}
 }
 
 variable "virtual_wan_properties" {

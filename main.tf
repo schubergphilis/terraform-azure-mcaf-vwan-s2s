@@ -32,7 +32,7 @@ resource "azurerm_vpn_gateway" "this" {
 
 
 resource "azurerm_vpn_site" "this" {
-  for_each            = var.vpn_sites
+  for_each            = var.vpn_sites != null ? var.vpn_sites : {}
   name                = var.vpn_sites[each.key].name
   location            = var.resource_group.location
   resource_group_name = var.resource_group.name

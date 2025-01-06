@@ -70,8 +70,8 @@ resource "azurerm_vpn_gateway_connection" "this" {
   for_each = var.vpn_site_connections != null && length(var.vpn_site_connections) > 0 ? var.vpn_site_connections : {}
 
   name                      = each.value.name
-  vpn_gateway_id            = lookup(azurerm_vpn_gateway.this, each.value.vpn_gateway_name, null).id
-  remote_vpn_site_id        = lookup(azurerm_vpn_site.this, each.value.remote_vpn_site_name, null).id
+  vpn_gateway_id            = lookup(azurerm_vpn_gateway.this, each.value.vpn_gateway_name).id
+  remote_vpn_site_id        = lookup(azurerm_vpn_site.this, each.value.remote_vpn_site_name).id
   internet_security_enabled = try(each.value.internet_security_enabled, null)
 
   dynamic "vpn_link" {
@@ -79,8 +79,7 @@ resource "azurerm_vpn_gateway_connection" "this" {
 
     content {
       name                                  = vpn_link.value.name
-      vpn_site_link_id                      = lookup(azurerm_vpn_site.this[var.vpn_sites[each.key].name].link, vpn_link.value.name, null).id
-      bandwidth_mbps                        = try(vpn_link.value.bandwidth_mbps, null)
+      vpn_site_link_id                      = azurerm_vpn_site.this[each.value.remote_vpn_site_name].link[vpn_link.value.name].id      bandwidth_mbps                        = try(vpn_link.value.bandwidth_mbps, null)
       bgp_enabled                           = try(vpn_link.value.bgp_enabled, null)
       connection_mode                       = try(vpn_link.value.connection_mode, null)
       protocol                              = try(vpn_link.value.protocol, null)

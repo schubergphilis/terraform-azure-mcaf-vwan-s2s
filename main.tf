@@ -79,7 +79,7 @@ resource "azurerm_vpn_gateway_connection" "this" {
 
     content {
       name                                  = vpn_link.value.name
-      vpn_site_link_id                      = azurerm_vpn_site.this[each.value.remote_vpn_site_name].link[vpn_link.value.vpn_site_link_number].id
+      vpn_site_link_id                      = azurerm_vpn_site.this[each.value.remote_vpn_site_name].link[vpn_link.value.name].id
       bgp_enabled                           = try(vpn_link.value.bgp_enabled, null)
       connection_mode                       = try(vpn_link.value.connection_mode, null)
       protocol                              = try(vpn_link.value.protocol, null)
@@ -105,7 +105,7 @@ resource "azurerm_vpn_gateway_connection" "this" {
       }
 
       dynamic "custom_bgp_address" {
-        for_each = vpn_link.value.custom_bgp_address != null ? [vpn_link.value.custom_bgp_address] : []
+        for_each = vpn_link.value.custom_bgp_address != null ? vpn_link.value.custom_bgp_address : []
 
         content {
           ip_address          = custom_bgp_address.value.ip_address

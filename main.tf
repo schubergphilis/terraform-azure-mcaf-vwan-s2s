@@ -72,10 +72,11 @@ resource "azurerm_vpn_gateway_connection" "this" {
   name                      = "${var.vpn_gateways[each.key].name}-${var.vpn_sites[each.key].name}"
   vpn_gateway_id            = azurerm_vpn_gateway.this[var.vpn_gateways[each.key].name].id
   remote_vpn_site_id        = azurerm_vpn_site.this[var.vpn_sites[each.key].name].id
-  internet_security_enabled = try(var.vpn_site_connections[each.key].internet_security_enabled, null)
+  internet_security_enabled = try(each.value.internet_security_enabled, null)
 
   dynamic "vpn_link" {
-    for_each = var.vpn_site_connections[each.key].vpn_links
+    for_each = each.value.vpn_links
+
     content {
       name                                  = vpn_link.value.name
       vpn_site_link_id                      = azurerm_vpn_site.this[var.vpn_sites[each.key].name].link[vpn_link.value.name].id
@@ -90,7 +91,7 @@ resource "azurerm_vpn_gateway_connection" "this" {
       policy_based_traffic_selector_enabled = try(vpn_link.value.policy_based_traffic_selector_enabled, null)
 
       dynamic "ipsec_policy" {
-        for_each = vpn.link.value.ipsec_policy != null ? [vpn_link.value.ipsec_policy] : []
+        for_each = vpn_link.value.ipsec_policy != null ? [vpn_link.value.ipsec_policy] : []
 
         content {
           dh_group                 = ipsec_policy.value.dh_group

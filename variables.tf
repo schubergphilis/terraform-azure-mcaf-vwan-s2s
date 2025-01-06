@@ -4,7 +4,6 @@ variable "tags" {
   default     = {}
 }
 
-
 variable "create_new_resource_group" {
   description = "A flag to create a Resource Group for the IP Groups"
   type        = bool
@@ -90,6 +89,5 @@ variable "vpn_site_connections" {
       ip_address          = string
       ip_configuration_id = string
     })))
-
   }))
 }

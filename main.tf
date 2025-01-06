@@ -79,7 +79,7 @@ resource "azurerm_vpn_gateway_connection" "this" {
 
     content {
       name                                  = vpn_link.value.name
-      vpn_site_link_id                      = azurerm_vpn_site.vpn_site[each.value.remote_vpn_site_name].link[vpn_link.value.vpn_site_link_number].id
+      vpn_site_link_id                      = azurerm_vpn_site.this[each.value.remote_vpn_site_name].link[vpn_link.value.vpn_site_link_number].id
       bgp_enabled                           = try(vpn_link.value.bgp_enabled, null)
       connection_mode                       = try(vpn_link.value.connection_mode, null)
       protocol                              = try(vpn_link.value.protocol, null)

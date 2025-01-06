@@ -69,10 +69,12 @@ variable "vpn_site_connections" {
     internet_security_enabled             = optional(bool)
 
     vpn_links = list(object({
-      name            = string
-      bandwidth_mbps  = optional(number)
-      bgp_enabled     = optional(bool)
-      connection_mode = optional(string)
+      name = string
+      # Index of the link on the vpn gateway
+      vpn_site_link_number = number
+      bandwidth_mbps       = optional(number)
+      bgp_enabled          = optional(bool)
+      connection_mode      = optional(string)
 
       ipsec_policy = optional(object({
         dh_group                 = string

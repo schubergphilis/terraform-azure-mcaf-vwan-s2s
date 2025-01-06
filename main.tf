@@ -70,8 +70,8 @@ resource "azurerm_vpn_gateway_connection" "this" {
   for_each = var.vpn_site_connections != null && length(var.vpn_site_connections) > 0 ? var.vpn_site_connections : {}
 
   name                      = each.value.name
-  vpn_gateway_id            = azurerm_vpn_gateway.this[each.value.vpn_gateway_name].id
-  remote_vpn_site_id        = azurerm_vpn_site.this[each.value.remote_vpn_site_name].id
+  vpn_gateway_id            = lookup(azurerm_vpn_gateway.this, each.value.vpn_gateway_name, null).id
+  remote_vpn_site_id        = lookup(azurerm_vpn_site.this, each.value.remote_vpn_site_name, null).id
   internet_security_enabled = try(each.value.internet_security_enabled, null)
 
   dynamic "vpn_link" {

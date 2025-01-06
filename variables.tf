@@ -84,10 +84,11 @@ variable "vpn_site_connections" {
         sa_data_size_kb          = string
         sa_lifetime_sec          = string
       }))
+
+      custom_bgp_address = optional(list(object({
+        ip_address          = string
+        ip_configuration_id = string
+      })))
     }))
-    custom_bgp_address = optional(list(object({
-      ip_address          = string
-      ip_configuration_id = string
-    })))
   }))
 }

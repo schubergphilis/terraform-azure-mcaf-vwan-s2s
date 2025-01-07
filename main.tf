@@ -30,13 +30,13 @@ resource "azurerm_vpn_gateway" "this" {
       dynamic "instance_0_bgp_peering_address" {
         for_each = bgp_settings.value.instance_0_bgp_peering_address != null ? [bgp_settings.value.instance_0_bgp_peering_address] : []
         content {
-            custom_ips = instance_0_bgp_peering_address.value.instance_0_bgp_peering_address
+            custom_ips = [instance_0_bgp_peering_address.value]
         }
       }
       dynamic "instance_1_bgp_peering_address" {
         for_each = bgp_settings.value.instance_1_bgp_peering_address != null ? [bgp_settings.value.instance_1_bgp_peering_address] : []
         content {
-            custom_ips = instance_1_bgp_peering_address.value.instance_1_bgp_peering_address
+            custom_ips = [instance_1_bgp_peering_address.value]
         }
       }
     }

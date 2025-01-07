@@ -27,11 +27,17 @@ resource "azurerm_vpn_gateway" "this" {
     content {
       asn         = bgp_settings.value.asn
       peer_weight = bgp_settings.value.peer_weight
-      instance_0_bgp_peering_address {
-        custom_ips = try([bgp_settings.value.instance_0_bgp_peering_address], [])
+      dynamic "instance_0_bgp_peering_address" {
+        for_each = bgp_settings.value.instance_0_bgp_peering_address != null ? [bgp_settings.value.instance_0_bgp_peering_address] : []
+        content {
+            custom_ips = instance_0_bgp_peering_address.value.instance_0_bgp_peering_address
+        }
       }
-      instance_1_bgp_peering_address {
-        custom_ips = try([bgp_settings.value.instance_1_bgp_peering_address], [])
+      dynamic "instance_1_bgp_peering_address" {
+        for_each = bgp_settings.value.instance_1_bgp_peering_address != null ? [bgp_settings.value.instance_1_bgp_peering_address] : []
+        content {
+            custom_ips = instance_1_bgp_peering_address.value.instance_1_bgp_peering_address
+        }
       }
     }
   }

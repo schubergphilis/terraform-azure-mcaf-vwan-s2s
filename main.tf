@@ -32,6 +32,7 @@ resource "azurerm_vpn_gateway" "this" {
       }
       instance_1_bgp_peering_address {
         custom_ips = try(bgp_settings.value.instance_1_bgp_peering_address, null)
+      }
     }
   }
 
@@ -42,8 +43,6 @@ resource "azurerm_vpn_gateway" "this" {
     })
   )
 }
-
-
 
 resource "azurerm_vpn_site" "this" {
   for_each            = var.vpn_sites != null ? var.vpn_sites : {}

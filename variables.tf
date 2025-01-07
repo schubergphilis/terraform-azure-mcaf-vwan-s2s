@@ -32,6 +32,12 @@ variable "vpn_gateways" {
     routing_preference = string
     scale_unit         = number
     virtual_hub_id     = string
+    bgp_settings = optional(object({
+      asn                            = number
+      instance_0_bgp_peering_address = optional(string)
+      instance_1_bgp_peering_address = optional(string)
+      peer_weight                    = number
+    }))
   }))
 }
 

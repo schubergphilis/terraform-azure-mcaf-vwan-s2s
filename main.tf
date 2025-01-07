@@ -21,6 +21,17 @@ resource "azurerm_vpn_gateway" "this" {
   routing_preference = try(each.value.routing_preference, null)
   scale_unit         = try(each.value.scale_unit, null)
 
+  dynamic "custom_bgp_address" {
+    for_each = each.value.bgp_settings != null ? each.value.bgp_settings : []
+
+    content {
+      asn                            = custom_bgp_address.value.asn
+      instance_0_bgp_peering_address = try(custom_bgp_address.value.instance_0_bgp_peering_address, null)
+      instance_1_bgp_peering_address = try(custom_bgp_address.value.instance_1_bgp_peering_address, null)
+      peer_weight                    = custom_bgp_address.value.peer_weight
+    }
+  }
+
   tags = merge(
     try(var.tags),
     tomap({

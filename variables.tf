@@ -63,24 +63,24 @@ variable "vpn_sites" {
 
 variable "vpn_site_connections" {
   type = map(object({
-    name                                  = string
-    vpn_gateway_name                      = string
-    remote_vpn_site_name                  = string
-    protocol                              = optional(string)
-    ratelimit_enabled                     = optional(bool)
-    route_weight                          = optional(number)
-    shared_key                            = optional(string)
-    local_azure_ip_address_enabled        = optional(bool)
-    policy_based_traffic_selector_enabled = optional(bool)
-    internet_security_enabled             = optional(bool)
+    name                      = string
+    vpn_gateway_name          = string
+    remote_vpn_site_name      = string
+    internet_security_enabled = optional(bool)
 
     vpn_links = list(object({
       name = string
       # Index of the link on the vpn gateway
-      vpn_site_link_number = number
-      bandwidth_mbps       = optional(number)
-      bgp_enabled          = optional(bool)
-      connection_mode      = optional(string)
+      vpn_site_link_number                  = number
+      bandwidth_mbps                        = optional(number)
+      bgp_enabled                           = optional(bool)
+      route_weight                          = optional(number)
+      ratelimit_enabled                     = optional(bool)
+      protocol                              = optional(string)
+      shared_key                            = optional(string)
+      connection_mode                       = optional(string)
+      local_azure_ip_address_enabled        = optional(bool)
+      policy_based_traffic_selector_enabled = optional(bool)
 
       ipsec_policy = optional(object({
         dh_group                 = string

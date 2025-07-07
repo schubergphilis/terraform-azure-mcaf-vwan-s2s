@@ -23,8 +23,6 @@ resource "azurerm_resource_group" "this" {
 module "s2svpn" {
   source = "../.."
 
-  tags = var.tags
-
   create_new_resource_group = false
   resource_group = {
     name     = azurerm_resource_group.this.name

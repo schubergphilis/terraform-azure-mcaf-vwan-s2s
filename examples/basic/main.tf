@@ -10,7 +10,6 @@ terraform {
 }
 
 resource "azurerm_resource_group" "this" {
-  count    = 1
   name     = "example-resource-group"
   location = "West Europe"
   tags = {

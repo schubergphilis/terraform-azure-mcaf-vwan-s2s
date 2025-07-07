@@ -63,10 +63,10 @@ variable "vpn_sites" {
 
 variable "vpn_site_connections" {
   type = map(object({
-    name                                  = string
-    vpn_gateway_name                      = string
-    remote_vpn_site_name                  = string
-    internet_security_enabled             = optional(bool)
+    name                      = string
+    vpn_gateway_name          = string
+    remote_vpn_site_name      = string
+    internet_security_enabled = optional(bool)
 
     vpn_links = list(object({
       name = string

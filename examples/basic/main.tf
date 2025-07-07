@@ -34,7 +34,7 @@ module "s2svpn" {
   virtual_wan_properties = {
     virtual_wan_id = "/subscriptions/00112233-4455-6677-8899-aabbccddeeff/resourceGroups/example-resource-group/providers/Microsoft.Network/virtualWans/example-vwan"
   }
-  vpn_gateways           =  {
+  vpn_gateways = {
     "example-vpn-gateway" = {
       name               = "example-vpn-gateway"
       routing_preference = "Microsoft Network"
@@ -48,7 +48,7 @@ module "s2svpn" {
       # }
     }
   }
-  vpn_sites              = {
+  vpn_sites = {
     "example-site" = {
       name          = "example-site"
       address_cidrs = ["172.1.1.0/24"]
@@ -66,7 +66,7 @@ module "s2svpn" {
       ]
     }
   }
-  vpn_site_connections   = {
+  vpn_site_connections = {
     "example-connection" = {
       name                      = "example-connection"
       vpn_gateway_name          = "example-vpn-gateway"

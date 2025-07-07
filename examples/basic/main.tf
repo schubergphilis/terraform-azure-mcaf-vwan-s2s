@@ -67,8 +67,8 @@ module "s2svpn" {
     }
   }
   vpn_site_connections   = {
-    "example-coonnection" = {
-      name                      = "example-coonnection"
+    "example-connection" = {
+      name                      = "example-connection"
       vpn_gateway_name          = "example-vpn-gateway"
       remote_vpn_site_name      = "example-site"
       internet_security_enabled = true

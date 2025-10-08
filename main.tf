@@ -58,6 +58,9 @@ resource "azurerm_vpn_site" "this" {
 
   virtual_wan_id = var.virtual_wan_properties.virtual_wan_id
   address_cidrs  = each.value.address_cidrs
+  device_model   = try(each.value.device_model, null)
+  device_vendor  = try(each.value.device_vendor, null)
+
 
   dynamic "link" {
     for_each = each.value.links != null && length(each.value.links) > 0 ? each.value.links : []

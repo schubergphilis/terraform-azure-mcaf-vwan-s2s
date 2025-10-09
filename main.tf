@@ -61,7 +61,6 @@ resource "azurerm_vpn_site" "this" {
   device_model   = try(each.value.device_model, null)
   device_vendor  = try(each.value.device_vendor, null)
 
-
   dynamic "link" {
     for_each = each.value.links != null && length(each.value.links) > 0 ? each.value.links : []
     content {

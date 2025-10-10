@@ -46,8 +46,8 @@ variable "vpn_sites" {
   type = map(object({
     name          = string
     address_cidrs = optional(list(string))
-    device_model  = optional(string)
-    device_vendor = optional(string)
+    device_model  = optional(string, null)
+    device_vendor = optional(string, null)
     links = list(object({
       name          = string
       ip_address    = optional(string)

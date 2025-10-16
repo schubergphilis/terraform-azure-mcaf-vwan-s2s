@@ -74,9 +74,7 @@ module "s2svpn" {
         {
           name                 = "example-link"
           vpn_site_link_number = 0
-          # Enable rate limit with a maximum throughput of 100Mbps:
-          ratelimit_enabled                     = true
-          bandwidth_mbps                        = 100
+
           bgp_enabled                           = false
           shared_key                            = "EXAMPLE_PRE_SHARED_KEY"
           connection_mode                       = "Default"
@@ -84,6 +82,9 @@ module "s2svpn" {
           route_weight                          = 100
           local_azure_ip_address_enabled        = false
           policy_based_traffic_selector_enabled = false
+          # Enable rate limit with a maximum throughput of 100Mbps:
+          ratelimit_enabled = true
+          bandwidth_mbps    = 100
 
           ipsec_policy = {
             dh_group                 = "DHGroup14"

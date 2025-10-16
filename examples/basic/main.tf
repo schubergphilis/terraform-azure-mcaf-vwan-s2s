@@ -74,8 +74,9 @@ module "s2svpn" {
         {
           name                                  = "example-link"
           vpn_site_link_number                  = 0
+          # Enable rate limit with a maximum throughput of 100Mbps:
           ratelimit_enabled                     = true 
-          bandwidth_mbps                        = 100 # Only effective when ratelimit_enabled is true, measured in Mbps. Default is 10
+          bandwidth_mbps                        = 100
           bgp_enabled                           = false
           shared_key                            = "EXAMPLE_PRE_SHARED_KEY"
           connection_mode                       = "Default"

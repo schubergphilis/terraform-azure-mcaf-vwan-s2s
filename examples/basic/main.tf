@@ -74,12 +74,12 @@ module "s2svpn" {
         {
           name                                  = "example-link"
           vpn_site_link_number                  = 0
-          bandwidth_mbps                        = 100
+          ratelimit_enabled                     = true 
+          bandwidth_mbps                        = 100 # Only effective when ratelimit_enabled is true, measured in Mbps. Default is 10
           bgp_enabled                           = false
           shared_key                            = "EXAMPLE_PRE_SHARED_KEY"
           connection_mode                       = "Default"
           protocol                              = "IKEv2"
-          ratelimit_enabled                     = false
           route_weight                          = 100
           local_azure_ip_address_enabled        = false
           policy_based_traffic_selector_enabled = false

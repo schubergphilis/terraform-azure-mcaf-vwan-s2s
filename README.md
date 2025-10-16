@@ -1,4 +1,13 @@
 # terraform-azure-mcaf-vwan-s2s
+Terraform module to create a VPN Gateway, Site and Connection in an existing Azure Virtual WAN.
+
+## VPN Connection rate limit
+VPN connection throughput can be limited by setting 'ratelimit_enabled' to true. This sets the maximum throughput to the default setting of 10Mbps which is customizable by setting 'bandwidth_mbps' (this value is only effective when ratelimit_enabled is set to true). Example that enables rate limit with a maximum throughput of 20Mbps:
+
+```hcl
+    bandwidth_mbps    = 20
+    ratelimit_enabled = true
+```
 <!-- BEGIN_TF_DOCS -->
 ## Requirements
 

@@ -105,6 +105,7 @@ resource "azurerm_vpn_gateway_connection" "this" {
       connection_mode                       = try(vpn_link.value.connection_mode, null)
       protocol                              = try(vpn_link.value.protocol, null)
       ratelimit_enabled                     = try(vpn_link.value.ratelimit_enabled, null)
+      bandwidth_mbps                        = try(vpn_link.value.bandwidth_mbps, null)
       route_weight                          = try(vpn_link.value.route_weight, null)
       shared_key                            = try(vpn_link.value.shared_key, null)
       local_azure_ip_address_enabled        = try(vpn_link.value.local_azure_ip_address_enabled, null)

@@ -42,20 +42,45 @@ module "s2svpn" {
   vpn_gateway_nat_rules = {
     # Translate remote site IP 192.168.1.4 to 10.96.111.4 when entering the hub
     siteb-nginx = {
-      name                   = "nat-rule-siteb-nginx"
-      vpn_gateway_name       = "hub"
-      mode                   = "IngressSnat"
-      internal_address_space = "192.168.1.4/32"
-      external_address_space = "172.16.111.4/32"
+      name             = "nat-rule-siteb-nginx"
+      vpn_gateway_name = "hub"
+      mode             = "IngressSnat"
+      internal_mappings = [{ address_space = "192.168.1.4/32" }]
+      external_mappings = [{ address_space = "172.16.111.4/32" }]
     }
 
     # Translate Azure spoke IP 10.96.2.4 to 10.96.222.4 when leaving the hub
     sitea-test = {
-      name                   = "nat-rule-sitea-test"
-      vpn_gateway_name       = "hub"
-      mode                   = "EgressSnat"
-      internal_address_space = "172.16.2.4/32"
-      external_address_space = "172.16.222.4/32"
+      name             = "nat-rule-sitea-test"
+      vpn_gateway_name = "hub"
+      mode             = "EgressSnat"
+      internal_mappings = [{ address_space = "172.16.2.4/32" }]
+      external_mappings = [{ address_space = "172.16.222.4/32" }]
+    }
+
+    # Example: multiple prefixes in a single NAT rule
+    multi-prefix = {
+      name             = "nat-rule-multi-prefix"
+      vpn_gateway_name = "hub"
+      mode             = "IngressSnat"
+      internal_mappings = [
+        { address_space = "192.168.10.0/24" },
+        { address_space = "192.168.11.0/25" },
+      ]
+      external_mappings = [
+        { address_space = "172.16.10.0/24" },
+        { address_space = "172.16.11.0/25" },
+      ]
+    }
+
+    # Example: Dynamic NAT (many:1 NAPT) - /24 mapped to /26
+    dynamic-napt = {
+      name             = "nat-rule-dynamic"
+      vpn_gateway_name = "hub"
+      mode             = "IngressSnat"
+      type             = "Dynamic"
+      internal_mappings = [{ address_space = "192.168.20.0/24" }]
+      external_mappings = [{ address_space = "172.16.20.0/26" }]
     }
   }
 

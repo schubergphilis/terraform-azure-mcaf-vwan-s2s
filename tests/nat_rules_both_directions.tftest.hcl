@@ -23,18 +23,18 @@ variables {
 
   vpn_gateway_nat_rules = {
     ingress-rule = {
-      name                   = "nat-rule-ingress"
-      vpn_gateway_name       = "hub"
-      mode                   = "IngressSnat"
-      internal_address_space = "192.168.1.0/24"
-      external_address_space = "172.16.111.0/24"
+      name             = "nat-rule-ingress"
+      vpn_gateway_name = "hub"
+      mode             = "IngressSnat"
+      internal_mappings = [{ address_space = "192.168.1.0/24" }]
+      external_mappings = [{ address_space = "172.16.111.0/24" }]
     }
     egress-rule = {
-      name                   = "nat-rule-egress"
-      vpn_gateway_name       = "hub"
-      mode                   = "EgressSnat"
-      internal_address_space = "172.16.2.4/32"
-      external_address_space = "172.16.222.4/32"
+      name             = "nat-rule-egress"
+      vpn_gateway_name = "hub"
+      mode             = "EgressSnat"
+      internal_mappings = [{ address_space = "172.16.2.4/32" }]
+      external_mappings = [{ address_space = "172.16.222.4/32" }]
     }
   }
 

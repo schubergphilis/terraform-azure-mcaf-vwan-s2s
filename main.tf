@@ -57,14 +57,20 @@ resource "azurerm_vpn_gateway_nat_rule" "this" {
   mode           = each.value.mode
   type           = each.value.type
 
-  internal_mapping {
-    address_space = each.value.internal_address_space
-    port_range    = each.value.internal_port_range
+  dynamic "internal_mapping" {
+    for_each = each.value.internal_mappings
+    content {
+      address_space = internal_mapping.value.address_space
+      port_range    = internal_mapping.value.port_range
+    }
   }
 
-  external_mapping {
-    address_space = each.value.external_address_space
-    port_range    = each.value.external_port_range
+  dynamic "external_mapping" {
+    for_each = each.value.external_mappings
+    content {
+      address_space = external_mapping.value.address_space
+      port_range    = external_mapping.value.port_range
+    }
   }
 }
 

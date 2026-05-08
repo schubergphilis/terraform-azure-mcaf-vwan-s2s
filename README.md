@@ -10,19 +10,63 @@ VPN connection throughput can be limited by setting 'ratelimit_enabled' to true.
 ```
 ## VPN Gateway NAT Rules
 
-NAT rules can be defined using the `vpn_gateway_nat_rules` variable and attached to VPN links by referencing their map keys in `ingress_nat_rule_names` and `egress_nat_rule_names`. See [`examples/nat-rules`](examples/nat-rules) for a complete example.
+NAT rules translate IP addresses on VPN tunnels to resolve overlapping address spaces. Define rules via `vpn_gateway_nat_rules` and attach them to VPN links using `ingress_nat_rule_names` / `egress_nat_rule_names`.
+
+### Modes
+
+- **IngressSnat** -- translates the source IP of packets arriving from the remote site.
+- **EgressSnat** -- translates the source IP of packets leaving toward the remote site.
+
+### Types
+
+| Type | Mapping | Direction | Notes |
+|------|---------|-----------|-------|
+| **Static** (default) | 1:1 fixed address mapping | Bidirectional | Subnets must be equal size |
+| **Dynamic** | Many:1 (NAPT) via port translation | Unidirectional (initiated from internal side only) | External mapping max /26 |
+
+### Multiple mappings per rule
+
+Each rule supports one or more `internal_mappings` and `external_mappings` entries, allowing multiple prefixes to be translated under a single rule.
 
 ```hcl
 vpn_gateway_nat_rules = {
+  # Static 1:1
   siteb-nginx = {
-    name                   = "nat-rule-siteb-nginx"
-    vpn_gateway_name       = "hub"
-    mode                   = "IngressSnat"
-    internal_address_space = "192.168.1.4/32"
-    external_address_space = "172.16.111.4/32"
+    name             = "nat-rule-siteb-nginx"
+    vpn_gateway_name = "hub"
+    mode             = "IngressSnat"
+    internal_mappings = [{ address_space = "192.168.1.4/32" }]
+    external_mappings = [{ address_space = "172.16.111.4/32" }]
+  }
+
+  # Multiple prefixes in one rule
+  multi-prefix = {
+    name             = "nat-rule-multi"
+    vpn_gateway_name = "hub"
+    mode             = "IngressSnat"
+    internal_mappings = [
+      { address_space = "192.168.10.0/24" },
+      { address_space = "192.168.11.0/25" },
+    ]
+    external_mappings = [
+      { address_space = "172.16.10.0/24" },
+      { address_space = "172.16.11.0/25" },
+    ]
+  }
+
+  # Dynamic many:1 NAPT
+  dynamic-napt = {
+    name             = "nat-rule-dynamic"
+    vpn_gateway_name = "hub"
+    mode             = "IngressSnat"
+    type             = "Dynamic"
+    internal_mappings = [{ address_space = "192.168.20.0/24" }]
+    external_mappings = [{ address_space = "172.16.20.0/26" }]
   }
 }
 ```
+
+See [`examples/nat-rules`](examples/nat-rules) for a complete example.
 
 <!-- BEGIN_TF_DOCS -->
 ## Requirements

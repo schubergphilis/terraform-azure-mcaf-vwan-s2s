@@ -106,17 +106,49 @@ variable "vpn_site_connections" {
 
 variable "vpn_gateway_nat_rules" {
   type = map(object({
-    name                   = string
-    vpn_gateway_name       = string
-    mode                   = string
-    type                   = optional(string, "Static")
-    internal_address_space = string
-    external_address_space = string
-    internal_port_range    = optional(string)
-    external_port_range    = optional(string)
+    name             = string
+    vpn_gateway_name = string
+    mode             = string
+    type             = optional(string, "Static")
+
+    internal_mappings = list(object({
+      address_space = string
+      port_range    = optional(string)
+    }))
+
+    external_mappings = list(object({
+      address_space = string
+      port_range    = optional(string)
+    }))
   }))
   default     = {}
-  description = "VPN Gateway NAT rules for IP translation over S2S VPN connections. vpn_gateway_name is the map key in var.vpn_gateways."
+  description = <<-EOT
+    VPN Gateway NAT rules for IP translation over S2S VPN connections.
+
+    - vpn_gateway_name: the map key in var.vpn_gateways.
+    - mode: "IngressSnat" (translate source of incoming packets) or "EgressSnat" (translate source of outgoing packets).
+    - type: "Static" (1:1 fixed mapping, bidirectional) or "Dynamic" (many:1 NAPT, unidirectional from internal side only, max /26 external).
+    - internal_mappings / external_mappings: one or more address translation entries per rule.
+      Each entry has an address_space (CIDR) and an optional port_range (Static type only, individual port).
+
+    Static NAT example (1:1):
+      internal_mappings = [{ address_space = "10.0.1.0/24" }]
+      external_mappings = [{ address_space = "192.168.1.0/24" }]
+
+    Dynamic NAT example (many:1 NAPT, /24 to /26):
+      internal_mappings = [{ address_space = "10.0.1.0/24" }]
+      external_mappings = [{ address_space = "192.168.1.0/26" }]
+
+    Multiple prefixes per rule:
+      internal_mappings = [
+        { address_space = "10.0.1.0/24" },
+        { address_space = "10.0.2.0/25" },
+      ]
+      external_mappings = [
+        { address_space = "192.168.1.0/24" },
+        { address_space = "192.168.2.0/25" },
+      ]
+  EOT
 
   validation {
     condition     = alltrue([for k, v in var.vpn_gateway_nat_rules : contains(["IngressSnat", "EgressSnat"], v.mode)])
@@ -126,5 +158,10 @@ variable "vpn_gateway_nat_rules" {
   validation {
     condition     = alltrue([for k, v in var.vpn_gateway_nat_rules : contains(["Static", "Dynamic"], v.type)])
     error_message = "type must be 'Static' or 'Dynamic'."
+  }
+
+  validation {
+    condition     = alltrue([for k, v in var.vpn_gateway_nat_rules : length(v.internal_mappings) > 0 && length(v.external_mappings) > 0])
+    error_message = "Each NAT rule must have at least one internal_mapping and one external_mapping."
   }
 }

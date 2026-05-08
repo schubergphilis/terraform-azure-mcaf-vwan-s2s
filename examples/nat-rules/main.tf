@@ -82,6 +82,16 @@ module "s2svpn" {
       internal_mappings = [{ address_space = "192.168.20.0/24" }]
       external_mappings = [{ address_space = "172.16.20.0/26" }]
     }
+
+    # Example: Static NAT with port mapping (port 8080 -> port 443)
+    # Port mappings only work with Static type, individual ports only (no ranges).
+    static-port = {
+      name             = "nat-rule-static-port"
+      vpn_gateway_name = "hub"
+      mode             = "IngressSnat"
+      internal_mappings = [{ address_space = "192.168.1.10/32", port_range = "8080" }]
+      external_mappings = [{ address_space = "172.16.111.10/32", port_range = "443" }]
+    }
   }
 
   vpn_sites = {

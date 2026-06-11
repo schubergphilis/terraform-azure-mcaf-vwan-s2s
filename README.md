@@ -1,3 +1,9 @@
+<!-- migrate-repo:banner -->
+> [!IMPORTANT]
+> **This repository has moved to [`schubergphilis-ep/terraform-azure-mcaf-vwan-s2s`](https://github.com/schubergphilis-ep/terraform-azure-mcaf-vwan-s2s).**
+> Please update your references and use the new location for issues, PRs, and contributions.
+<!-- migrate-repo:banner -->
+
 # terraform-azure-mcaf-vwan-s2s
 Terraform module to create a VPN Gateway, Site and Connection in an existing Azure Virtual WAN.
 
